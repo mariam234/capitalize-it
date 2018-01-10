@@ -21,7 +21,7 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///ratings.db")
+db = SQL("postgres://qqjafeneqzaesb:d4590f21976f93958fbf925e3fd36fd0c6fa9c75da019c1f3ec25f375c9d3026@ec2-184-73-175-95.compute-1.amazonaws.com:5432/d3g29nu5hbcng6")
 
 # Ensure responses aren't cached
 @app.after_request
