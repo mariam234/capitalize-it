@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Uploader
+{% endblock %}
+
+{% block main %}
+
+<html>
+   <body>
+      <form action="/uploader" method = "POST" enctype="multipart/form-data">
+         <div class="form-group" align="left">
+            <input type="file" class="form-control-file" name="file" aria-describedby="fileHelp">
+            <small name="fileHelp" class="form-text text-muted">.txt only</small>
+         </div>
+         <div class="form-group" align="left">
+            <button class="btn btn-lg btn-danger" type="submit" name="submit">Capitalize it!</button>
+         </div>
+      </form>
+
+   </body>
+</html>
+{% endblock %}
