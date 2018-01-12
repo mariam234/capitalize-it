@@ -3,11 +3,24 @@ from flask import Flask, flash, redirect, render_template, request, url_for, sen
 from flask_session import Session
 from tempfile import mkdtemp
 import os
+import sqlalchemy
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions
 from werkzeug.utils import secure_filename
 from random import randint
 import capitalizeIt
+import urlparse
+import psycopg2
+
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
+conn = psycopg2.connect(
+ database=url.path[1:],
+ user=url.username,
+ password=url.password,
+ host=url.hostname,
+ port=url.port
+)
 
 ALLOWED_EXTENSIONS = set(["txt"])
 UPLOAD_FOLDER = "./uploads"
@@ -21,7 +34,7 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Configure CS50 Library to use SQLite database
-db = SQL("postgres://qqjafeneqzaesb:d4590f21976f93958fbf925e3fd36fd0c6fa9c75da019c1f3ec25f375c9d3026@ec2-184-73-175-95.compute-1.amazonaws.com:5432/d3g29nu5hbcng6")
+db = SQL(os.environ["DATABASE_URL"])
 
 # Ensure responses aren't cached
 @app.after_request
@@ -114,3 +127,33 @@ def errorhandler(e):
 # listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
+
+class SQL(object):
+    def __init__(self, url):
+        try:
+            self.engine = sqlalchemy.create_engine(url)
+        except Exception as e:
+            raise RuntimeError(e)
+    def execute(self, text, *multiparams, **params):
+        try:
+            statement = sqlalchemy.text(text).bindparams(*multiparams, **params)
+            result = self.engine.execute(str(statement.compile(compile_kwargs={"literal_binds": True})))
+            # SELECT
+            if result.returns_rows:
+                rows = result.fetchall()
+                return [dict(row) for row in rows]
+            # INSERT
+            elif result.lastrowid is not None:
+                return result.lastrowid
+            # DELETE, UPDATE
+            else:
+                return result.rowcount
+        except sqlalchemy.exc.IntegrityError:
+            return None
+        except Exception as e:
+            raise RuntimeError(e)
+
+if __name__ == "__main__":
+ app.debug = True
+ port = int(os.environ.get("PORT", 5000))
+ app.run(host='0.0.0.0', port=port)
