@@ -13,7 +13,7 @@ cffi==1.11.2
 chardet==3.0.4
 check50==2.2.1
 click==6.7
-cryptography==2.1.4
+cryptography==3.2
 cs50==2.3.2
 cssselect==1.0.1
 cssselect2==0.2.0
