@@ -7,7 +7,7 @@ beautifulsoup4==4.6.0
 bs4==0.0.1
 cachetools==2.0.1
 cairocffi==0.8.0
-CairoSVG==2.0.3
+CairoSVG==2.5.1
 certifi==2017.11.5
 cffi==1.11.2
 chardet==3.0.4
